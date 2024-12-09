@@ -1,8 +1,7 @@
 # Backend
 
 ## What you need :
-Create .env file 
-
+- Create .env file (Check password channel or contact admin)
 ```
 DB_URL=
 DB_USERNAME=
