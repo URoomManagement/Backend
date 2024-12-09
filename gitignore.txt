@@ -1,0 +1,67 @@
+# Maven and Gradle
+target/
+build/
+
+# Logs
+*.log
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.target/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*~
+
+# Spring Boot
+*.jar
+*.war
+*.ear
+
+# Temporary files
+*.swp
+*.tmp
+*.bak
+*.backup
+*.orig
+*.rej
+*.sublime-project
+*.sublime-workspace
+
+# Local environment files
+.env
+*.env
+
+# Test reports
+test-output/
+surefire-reports/
+jacoco.exec
+
+# Coverage reports
+coverage/
+*.lcov
+*.lcov.info
+
+# Configuration files
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# OS-specific files
+*.class
