@@ -1,14 +1,10 @@
-package com.example.myproject.services;
+package com.example.myproject.Reservation;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.example.myproject.DTOs.ReservationDTO;
-import com.example.myproject.Entity.Reservation;
-import com.example.myproject.repository.ReservationRepository;
 
 @Service
 public class ReservationService {
