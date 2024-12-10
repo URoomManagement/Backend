@@ -1,7 +1,5 @@
-package com.example.myproject.controller;
+package com.example.myproject.User;
 
-import com.example.myproject.Entity.User;
-import com.example.myproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

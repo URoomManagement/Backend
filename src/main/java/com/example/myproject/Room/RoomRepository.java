@@ -1,7 +1,6 @@
-package com.example.myproject.repository;
+package com.example.myproject.Room;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.myproject.Entity.Room;
 
 public interface RoomRepository extends JpaRepository<Room, Long>{
     

@@ -1,4 +1,7 @@
-package com.example.myproject.Entity;
+package com.example.myproject.Reservation;
+
+import com.example.myproject.Room.Room;
+import com.example.myproject.User.User;
 
 import java.time.LocalDateTime;
 

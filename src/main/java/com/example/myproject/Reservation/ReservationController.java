@@ -1,13 +1,9 @@
-package com.example.myproject.controller;
+package com.example.myproject.Reservation;
 
-import com.example.myproject.Entity.Reservation;
-import com.example.myproject.Entity.Room;
-import com.example.myproject.Entity.User;
-import com.example.myproject.repository.ReservationRepository;
-import com.example.myproject.repository.RoomRepository;
-import com.example.myproject.repository.UserRepository;
-import com.example.myproject.services.ReservationService;
-import com.example.myproject.DTOs.ReservationDTO;
+import com.example.myproject.Room.Room;
+import com.example.myproject.Room.RoomRepository;
+import com.example.myproject.User.User;
+import com.example.myproject.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

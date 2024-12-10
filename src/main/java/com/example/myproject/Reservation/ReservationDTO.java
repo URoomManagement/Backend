@@ -1,4 +1,4 @@
-package com.example.myproject.DTOs;
+package com.example.myproject.Reservation;
 
 import java.time.LocalDateTime;
 import com.example.myproject.Enums.Location;
