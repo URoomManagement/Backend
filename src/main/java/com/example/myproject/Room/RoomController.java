@@ -12,36 +12,31 @@ public class RoomController {
 
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private RoomService roomService;
 
     // GET: Fetch all rooms
     @GetMapping
-    public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+    public List<RoomDTO> getAllRooms() {
+        return roomService.getAllRooms();
     }
 
     // GET: Fetch a room by ID
     @GetMapping("/{id}")
-    public Optional<Room> getRoomById(@PathVariable Long id) {
-        return roomRepository.findById(id);
+    public Optional<RoomDTO> getRoomById(@PathVariable Long id) {
+        return roomService.getRoomById(id);
     }
 
     // POST: Create a new room
     @PostMapping
-    public Room createRoom(@RequestBody Room room) {
-        return roomRepository.save(room);
+    public RoomDTO createRoom(@RequestBody Room room) {
+        return roomService.createRoom(room);
     }
 
     // PUT: Update an existing room
     @PutMapping("/{id}")
-    public Room updateRoom(@PathVariable Long id, @RequestBody Room updatedRoom) {
-        return roomRepository.findById(id)
-                .map(room -> {
-                    room.setName(updatedRoom.getName());
-                    room.setLocation(updatedRoom.getLocation());
-                    room.setInfo(updatedRoom.getInfo());
-                    return roomRepository.save(room);
-                })
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+    public RoomDTO updateRoom(@PathVariable Long id, @RequestBody Room updatedRoom) {
+        return roomService.updateRoom(id, updatedRoom);
     }
 
     // DELETE: Delete a user by ID
