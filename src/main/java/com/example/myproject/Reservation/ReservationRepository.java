@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>{
     @Query("SELECT r FROM Reservation r WHERE r.room.id = :roomId AND :startedAt < r.endedAt AND :endedAt > r.startedAt")
-List<Reservation> findOverlappingReservations(@Param("roomId") Long roomId,
+    List<Reservation> findOverlappingReservations(@Param("roomId") Long roomId,
                                               @Param("startedAt") LocalDateTime startedAt,
                                               @Param("endedAt") LocalDateTime endedAt);
 

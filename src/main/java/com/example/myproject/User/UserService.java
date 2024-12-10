@@ -5,11 +5,15 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers(){
         return userRepository.findAll().stream()
@@ -23,6 +27,7 @@ public class UserService {
     }
 
     public UserDTO createUser(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return mapToDTO(userRepository.save(user));
     }
 
@@ -39,5 +44,16 @@ public class UserService {
 
     private UserDTO mapToDTO(User user){
         return new UserDTO(user.getId(), user.getEmail(), user.getName());
+    }
+
+    public String login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return "Login successful";
     }
 }
