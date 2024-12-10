@@ -21,5 +21,4 @@ public class MyApplication {
 		envSetter.start();
 		SpringApplication.run(MyApplication.class, args);
 	}
-
 }

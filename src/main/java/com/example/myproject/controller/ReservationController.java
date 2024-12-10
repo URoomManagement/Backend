@@ -6,9 +6,12 @@ import com.example.myproject.Entity.User;
 import com.example.myproject.repository.ReservationRepository;
 import com.example.myproject.repository.RoomRepository;
 import com.example.myproject.repository.UserRepository;
+import com.example.myproject.services.ReservationService;
+import com.example.myproject.DTOs.ReservationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,8 @@ public class ReservationController {
     private RoomRepository roomRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ReservationService reservationService;
 
     // GET: Fetch all reservations
     @GetMapping
@@ -31,7 +36,7 @@ public class ReservationController {
 
     // GET: Fetch a reservation by ID
     @GetMapping("/{id}")
-    public Optional<Reservation> getUserById(@PathVariable Long id) {
+    public Optional<Reservation> getReservationById(@PathVariable Long id) {
         return reservationRepository.findById(id);
     }
 
@@ -56,7 +61,7 @@ public class ReservationController {
 
     // PUT: Update an existing Reservation
     @PutMapping("/{id}")
-    public Reservation updateUser(@PathVariable Long id, @RequestBody Reservation updatedReservation) {
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation updatedReservation) {
         return reservationRepository.findById(id)
                 .map(reservation -> {
                     reservation.setPurpose(updatedReservation.getPurpose());
@@ -73,5 +78,11 @@ public class ReservationController {
     @DeleteMapping("/{id}")
     public void deleteReservation(@PathVariable Long id) {
         reservationRepository.deleteById(id);
+    }
+
+    @GetMapping("/check")
+    public ReservationDTO getReservationByDateAndRoom(@RequestParam Long roomId,
+                                            @RequestParam LocalDateTime date) {
+        return reservationService.getReservationsByRoomAndDate(roomId, date);
     }
 }
