@@ -36,4 +36,13 @@ public class GlobalExceptionHandler {
         errorResponse.put("message", ex.getMessage());
         return errorResponse;
     }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404 Not Found
+    public Map<String, String> handleRoomNotFoundException(RoomNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Room not found");
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
 }

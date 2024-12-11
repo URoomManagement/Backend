@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
 
-    @Autowired
-    private RoomRepository roomRepository;
     @Autowired
     private RoomService roomService;
 
@@ -23,7 +20,7 @@ public class RoomController {
 
     // GET: Fetch a room by ID
     @GetMapping("/{id}")
-    public Optional<RoomDTO> getRoomById(@PathVariable Long id) {
+    public RoomDTO getRoomById(@PathVariable Long id) {
         return roomService.getRoomById(id);
     }
 
@@ -42,6 +39,6 @@ public class RoomController {
     // DELETE: Delete a user by ID
     @DeleteMapping("/{id}")
     public void deleteRoom(@PathVariable Long id) {
-        roomRepository.deleteById(id);
+        roomService.deleteRoom(id);
     }
 }

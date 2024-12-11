@@ -29,7 +29,7 @@ public class UserService {
     public UserDTO getUserById(long id){
         return userRepository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " +  " not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public UserDTO createUser(User user){
@@ -49,12 +49,12 @@ public class UserService {
                     user.setPassword(updatedUser.getPassword());
                     return mapToDTO(userRepository.save(user));
                 })
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + " not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public void deleteUser(Long id){
         if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException("User with ID " + id + " not found");
+            throw new UserNotFoundException("User not found");
         }
         userRepository.deleteById(id);
     }
