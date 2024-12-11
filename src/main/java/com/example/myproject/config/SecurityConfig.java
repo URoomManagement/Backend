@@ -20,7 +20,10 @@ public class SecurityConfig {
             "/api/users/login",
             "/api/users/**",
             "api/rooms",
-            "api/rooms/**"
+            "api/rooms/**",
+            "/api/reservations",
+            "/api/reservations/**",
+            "/api/reservations/check"
         );
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs

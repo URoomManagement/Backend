@@ -2,12 +2,15 @@ package com.example.myproject.Reservation;
 
 import com.example.myproject.Room.RoomRepository;
 import com.example.myproject.User.UserRepository;
+import com.example.myproject.Exceptions.ReservationNotFoundException;
+import com.example.myproject.Exceptions.RoomAlreadyReserved;
+import com.example.myproject.Exceptions.RoomNotFoundException;
+import com.example.myproject.Exceptions.UserNotFoundException;
 import com.example.myproject.Room.Room;
 import com.example.myproject.User.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,23 +30,24 @@ public class ReservationService {
                 .toList();
     }
 
-    public Optional<ReservationDTO> getReservationById(Long id){
+    public ReservationDTO getReservationById(Long id){
         return reservationRepository.findById(id)
-                .map(this::mapToDTO);
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
     }
 
-    public ReservationDTO createReservation(Long roomId, Long userId, Reservation reservationDetails){
-        Room room = roomRepository.findById(roomId)
-            .orElseThrow(() -> new RuntimeException("Room not found"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public ReservationDTO createReservation(ReservationRequest reservationDetails){
+        Room room = roomRepository.findById(reservationDetails.getRoomId())
+            .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        User user = userRepository.findById(reservationDetails.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Check whether there is already overlapping reservation
         List<Reservation> overlappingReservations = reservationRepository.findOverlappingReservations(
-                roomId, reservationDetails.getStartedAt(), reservationDetails.getEndedAt());
+                reservationDetails.getRoomId(), reservationDetails.getStartedAt(), reservationDetails.getEndedAt());
 
         if (!overlappingReservations.isEmpty()) {
-            throw new RuntimeException("The room is already reserved during the specified time.");
+            throw new RoomAlreadyReserved("The room is already reserved during the specified time.");
         }
 
         // Create a new one if not overlapping
@@ -67,7 +71,7 @@ public class ReservationService {
                     reservation.setRoom(updatedReservation.getRoom());
                     return mapToDTO(reservationRepository.save(reservation));
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
     }
 
     public ReservationDTO getReservationsByRoomAndDate(Long roomId, LocalDateTime date) {
@@ -76,6 +80,13 @@ public class ReservationService {
         return reservations.stream()
                 .map(this::mapToDTO)
                 .toList().get(0);
+    }
+
+    public void deleteReservation(Long id){
+        if(!reservationRepository.existsById(id)){
+            throw new ReservationNotFoundException("Reservation not Found");
+        }
+        reservationRepository.deleteById(id);
     }
 
     private ReservationDTO mapToDTO(Reservation reservation) {

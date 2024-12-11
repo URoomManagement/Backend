@@ -45,4 +45,13 @@ public class GlobalExceptionHandler {
         errorResponse.put("message", ex.getMessage());
         return errorResponse;
     }
+
+    @ExceptionHandler(ReservationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404 Not Found
+    public Map<String, String> handleReservationNotFoundException(ReservationNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Reservation not found");
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
 }
