@@ -1,10 +1,15 @@
 package com.example.myproject.User;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.example.myproject.Exceptions.DatabaseException;
+import com.example.myproject.Exceptions.InvalidCredentialsException;
+import com.example.myproject.Exceptions.UserNotFoundException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
@@ -21,14 +26,19 @@ public class UserService {
                 .toList();
     }
 
-    public Optional<UserDTO> getUserById(long id){
+    public UserDTO getUserById(long id){
         return userRepository.findById(id)
-                .map(this::mapToDTO);
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new UserNotFoundException("User with ID " +  " not found"));
     }
 
     public UserDTO createUser(User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return mapToDTO(userRepository.save(user));
+        try{
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return mapToDTO(userRepository.save(user));
+        } catch(DataAccessException e){
+            throw new DatabaseException("Failed to save user to the database: " + e.getMessage());
+        }
     }
 
     public UserDTO updateUser(Long id, User updatedUser){
@@ -39,7 +49,14 @@ public class UserService {
                     user.setPassword(updatedUser.getPassword());
                     return mapToDTO(userRepository.save(user));
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + " not found"));
+    }
+
+    public void deleteUser(Long id){
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User with ID " + id + " not found");
+        }
+        userRepository.deleteById(id);
     }
 
     private UserDTO mapToDTO(User user){
@@ -48,10 +65,10 @@ public class UserService {
 
     public String login(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    
+            .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
+
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
         return "Login successful";

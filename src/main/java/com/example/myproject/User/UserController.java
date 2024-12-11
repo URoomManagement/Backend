@@ -7,14 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import com.example.myproject.Login.LoginRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private UserService userService;
 
@@ -26,7 +23,7 @@ public class UserController {
 
     // GET: Fetch a user by ID
     @GetMapping("/{id}")
-    public Optional<UserDTO> getUserById(@PathVariable Long id) {
+    public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
@@ -45,7 +42,7 @@ public class UserController {
     // DELETE: Delete a user by ID
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
+        userService.deleteUser(id);
     }
 
     @PostMapping("/login")
