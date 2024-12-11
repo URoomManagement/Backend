@@ -1,7 +1,10 @@
 package com.example.myproject.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.myproject.Login.LoginRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +31,7 @@ public class UserController {
     }
 
     // POST: Create a new user
-    @PostMapping
+    @PostMapping("/register")
     public UserDTO createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
@@ -43,5 +46,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        String result = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        return ResponseEntity.ok(result);
     }
 }
