@@ -1,10 +1,13 @@
 package com.example.myproject.Room;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.example.myproject.Exceptions.DatabaseException;
+import com.example.myproject.Exceptions.RoomNotFoundException;
 
 @Service
 public class RoomService {
@@ -17,13 +20,18 @@ public class RoomService {
                 .toList();
     }
 
-    public Optional<RoomDTO> getRoomById(Long id){
+    public RoomDTO getRoomById(Long id){
         return roomRepository.findById(id)
-                .map(this::mapToDTO);
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
     }
 
     public RoomDTO createRoom(Room room){
-        return mapToDTO(roomRepository.save(room));
+        try{
+            return mapToDTO(roomRepository.save(room));
+        } catch(DataAccessException e){
+            throw new DatabaseException("Failed to save room to the database: " + e.getMessage());
+        }
     }
 
     public RoomDTO updateRoom(Long id, Room updatedRoom){
@@ -34,7 +42,14 @@ public class RoomService {
                     room.setInfo(updatedRoom.getInfo());
                     return mapToDTO(roomRepository.save(room));
                 })
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+    }
+
+    public void deleteRoom(Long id){
+        if(!roomRepository.existsById(id)){
+            throw new RoomNotFoundException("Room not Found");
+        }
+        roomRepository.deleteById(id);
     }
 
     private RoomDTO mapToDTO(Room room){

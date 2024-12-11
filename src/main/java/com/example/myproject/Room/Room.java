@@ -26,6 +26,7 @@ public class Room {
     @Column(nullable = false)
     private Location location;
     
+    @Column(unique = true, nullable = false)
     private String name;
     private String info;
 

@@ -5,14 +5,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
 
-    @Autowired
-    private ReservationRepository reservationRepository;
     @Autowired
     private ReservationService reservationService;
     
@@ -25,14 +22,14 @@ public class ReservationController {
 
     // GET: Fetch a reservation by ID
     @GetMapping("/{id}")
-    public Optional<ReservationDTO> getReservationById(@PathVariable Long id) {
+    public ReservationDTO getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
 
     // POST: Create a new Reservation
     @PostMapping
-    public ReservationDTO createReservation(@RequestParam Long roomId, @RequestParam Long userId, @RequestBody Reservation reservationDetails) {
-        return reservationService.createReservation(roomId, userId, reservationDetails);
+    public ReservationDTO createReservation(@RequestBody ReservationRequest reservationDetails) {
+        return reservationService.createReservation(reservationDetails);
     }
 
     // PUT: Update an existing Reservation
@@ -44,7 +41,7 @@ public class ReservationController {
     // DELETE: Delete a reservation by ID
     @DeleteMapping("/{id}")
     public void deleteReservation(@PathVariable Long id) {
-        reservationRepository.deleteById(id);
+        reservationService.deleteReservation(id);
     }
 
     @GetMapping("/check")
