@@ -1,16 +1,25 @@
 package com.example.myproject.User;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.myproject.Exceptions.DatabaseException;
-import com.example.myproject.Exceptions.InvalidCredentialsException;
 import com.example.myproject.Exceptions.UserNotFoundException;
+import com.example.myproject.Helper.JwtUtil;
+import com.example.myproject.Login.LoginRequest;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.AuthenticationException;
 
 
 @Service
@@ -19,6 +28,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public List<UserDTO> getAllUsers(){
         return userRepository.findAll().stream()
@@ -63,14 +76,24 @@ public class UserService {
         return new UserDTO(user.getId(), user.getEmail(), user.getName());
     }
 
-    public String login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
+    public ResponseEntity<?> login(LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.getEmail(),
+                    loginRequest.getPassword()
+                )
+            );
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid credentials");
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtUtil.generateToken(userDetails.getUsername());
+
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
-
-        return "Login successful";
     }
 }

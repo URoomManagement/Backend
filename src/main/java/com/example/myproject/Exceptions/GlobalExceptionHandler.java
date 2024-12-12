@@ -54,4 +54,13 @@ public class GlobalExceptionHandler {
         errorResponse.put("message", ex.getMessage());
         return errorResponse;
     }
+
+    @ExceptionHandler(RoomAlreadyReserved.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404 Not Found
+    public Map<String, String> handleRoomAlreadyReservedException(RoomAlreadyReserved ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Room Already Reserved");
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
 }
