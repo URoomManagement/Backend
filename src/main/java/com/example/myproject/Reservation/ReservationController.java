@@ -31,6 +31,11 @@ public class ReservationController {
         return reservationService.getReservationsByRoomId(roomId);
     }
 
+    @GetMapping("/users/{userId}")
+    public List<ReservationDTO> getReservationsByUserId(@PathVariable Long userId) {
+        return reservationService.getReservationsByUserId(userId);
+    }
+
     // POST: Create a new Reservation
     @PostMapping
     public ReservationDTO createReservation(@RequestBody ReservationRequest reservationDetails) {

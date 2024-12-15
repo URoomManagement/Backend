@@ -18,4 +18,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>{
     
     List<Reservation> findByRoomId(Long roomId);
 
+    List<Reservation> findByUserIdOrderByStartedAtDesc(Long userId);
+
 }
