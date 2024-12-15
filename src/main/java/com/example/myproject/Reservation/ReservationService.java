@@ -40,10 +40,8 @@ public class ReservationService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
 
-        // Fetch the reservations for the room
         List<Reservation> reservations = reservationRepository.findByRoomId(roomId);
 
-        // Map reservations to DTOs
         List<ReservationPerRoomDTO> reservationDTOs = reservations.stream()
                 .map(reservation -> new ReservationPerRoomDTO(
                     reservation.getId(),
@@ -54,13 +52,18 @@ public class ReservationService {
                 ))
                 .toList();
 
-        // Combine room and reservations into a single DTO
         return new ReservationsPerRoomDTO(
             room.getLocation(),
             room.getName(),
             room.getInfo(),
             reservationDTOs
         );
+    }
+
+    public List<ReservationDTO> getReservationsByUserId(Long userId){
+        return reservationRepository.findByUserIdOrderByStartedAtDesc(userId).stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     public ReservationDTO createReservation(ReservationRequest reservationDetails){

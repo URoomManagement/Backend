@@ -32,7 +32,9 @@ public class SecurityConfig {
             "/api/users/register",
             "/api/users/login",
             "/api/rooms/location",
-            "/api/reservations/rooms/**"
+            "/api/reservations/rooms/**",
+            "/api/reservations/users/**",
+            "/api/reservations/**"
         );
 
         http
