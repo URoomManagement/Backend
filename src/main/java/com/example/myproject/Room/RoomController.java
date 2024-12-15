@@ -3,6 +3,8 @@ package com.example.myproject.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.myproject.Enums.Location;
+
 import java.util.List;
 
 @RestController
@@ -16,6 +18,11 @@ public class RoomController {
     @GetMapping
     public List<RoomDTO> getAllRooms() {
         return roomService.getAllRooms();
+    }
+
+    @GetMapping("/location")
+    public List<RoomDTO> getRoomsByLocation(@RequestParam Location location) {
+        return roomService.getAllRoomsPerLocation(location);
     }
 
     // GET: Fetch a room by ID

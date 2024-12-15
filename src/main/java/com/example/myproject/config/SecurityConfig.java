@@ -10,6 +10,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.example.myproject.Helper.JwtAuthenticationFilter;
 
@@ -27,12 +30,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> permittedEndpoints = List.of(
             "/api/users/register",
-            "/api/users/login"
+            "/api/users/login",
+            "/api/rooms/location",
+            "/api/reservations/rooms/**"
         );
+
         http
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers(permittedEndpoints.toArray(String[]::new)).permitAll()
+                .requestMatchers(permittedEndpoints.toArray(String[]::new)).permitAll()
                 .anyRequest().authenticated() // Other endpoints require authentication
             )
             .exceptionHandling(exceptions -> exceptions
@@ -45,9 +51,21 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless sessions
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true); 
+        config.addAllowedOrigin("http://localhost:3000"); 
+        config.addAllowedMethod("*"); 
+        config.addAllowedHeader("*"); 
+        source.registerCorsConfiguration("/**", config); 
+        return new CorsFilter(source);
     }
 
     @Bean

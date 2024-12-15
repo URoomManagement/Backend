@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.example.myproject.Enums.Location;
 import com.example.myproject.Exceptions.DatabaseException;
 import com.example.myproject.Exceptions.RoomNotFoundException;
 
@@ -16,6 +17,12 @@ public class RoomService {
     
     public List<RoomDTO> getAllRooms(){
         return roomRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    public List<RoomDTO> getAllRoomsPerLocation(Location locationName){
+        return roomRepository.findByLocationOrderByNameAsc(locationName).stream()
                 .map(this::mapToDTO)
                 .toList();
     }

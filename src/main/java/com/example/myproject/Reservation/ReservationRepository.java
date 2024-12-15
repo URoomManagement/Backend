@@ -15,4 +15,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>{
 
     @Query("SELECT r FROM Reservation as r WHERE r.room.id = :roomId AND :date BETWEEN r.startedAt AND r.endedAt")
     List<Reservation> findByRoomAndDate(@Param("roomId") Long roomId, @Param("date") LocalDateTime date);   
+    
+    List<Reservation> findByRoomId(Long roomId);
+
 }

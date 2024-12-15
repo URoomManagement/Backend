@@ -36,6 +36,33 @@ public class ReservationService {
                 .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
     }
 
+    public ReservationsPerRoomDTO getReservationsByRoomId(Long roomId){
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+
+        // Fetch the reservations for the room
+        List<Reservation> reservations = reservationRepository.findByRoomId(roomId);
+
+        // Map reservations to DTOs
+        List<ReservationPerRoomDTO> reservationDTOs = reservations.stream()
+                .map(reservation -> new ReservationPerRoomDTO(
+                    reservation.getId(),
+                    reservation.getPurpose(),
+                    reservation.getStartedAt(),
+                    reservation.getEndedAt(),
+                    reservation.getUser().getName()
+                ))
+                .toList();
+
+        // Combine room and reservations into a single DTO
+        return new ReservationsPerRoomDTO(
+            room.getLocation(),
+            room.getName(),
+            room.getInfo(),
+            reservationDTOs
+        );
+    }
+
     public ReservationDTO createReservation(ReservationRequest reservationDetails){
         Room room = roomRepository.findById(reservationDetails.getRoomId())
             .orElseThrow(() -> new RoomNotFoundException("Room not found"));
