@@ -34,7 +34,8 @@ public class SecurityConfig {
             "/api/rooms/location",
             "/api/reservations/rooms/**",
             "/api/reservations/users/**",
-            "/api/reservations/**"
+            "/api/reservations/**",
+            "/api/reservations"
         );
 
         http
