@@ -29,8 +29,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> permittedEndpoints = List.of(
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/auth/logout",
             "/api/users/register",
-            "/api/users/login",
             "/api/rooms/location",
             "/api/reservations/rooms/**",
             "/api/reservations/users/**",
@@ -42,17 +44,17 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(permittedEndpoints.toArray(String[]::new)).permitAll()
-                .anyRequest().authenticated() // Other endpoints require authentication
+                .anyRequest().authenticated()
             )
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);    // 401 Unauthorized
                     response.setContentType("application/json");
                     response.getWriter().write("{\"error\": \"Access denied\", \"message\": \"You do not have permission to access this resource.\"}");
                 })
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless sessions
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
