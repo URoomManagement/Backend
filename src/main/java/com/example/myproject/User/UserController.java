@@ -1,10 +1,7 @@
 package com.example.myproject.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.myproject.Login.LoginRequest;
 
 import java.util.List;
 
@@ -43,10 +40,5 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        return userService.login(loginRequest);
     }
 }
