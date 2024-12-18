@@ -28,4 +28,9 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         return authService.logout(response);
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(HttpServletRequest request) {
+        return authService.validateToken(request);
+    }
 } 

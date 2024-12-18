@@ -60,6 +60,12 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public UserDTO getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
     private UserDTO mapToDTO(User user){
         return new UserDTO(user.getId(), user.getEmail(), user.getName());
     }
