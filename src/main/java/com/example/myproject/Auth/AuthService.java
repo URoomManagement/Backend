@@ -2,6 +2,10 @@ package com.example.myproject.Auth;
 
 import com.example.myproject.Helper.JwtUtil;
 import com.example.myproject.Auth.dto.LoginRequest;
+import com.example.myproject.User.UserRepository;
+import com.example.myproject.User.User;
+import com.example.myproject.User.UserService;
+import com.example.myproject.User.UserDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class AuthService {
     @Autowired
@@ -27,6 +34,10 @@ public class AuthService {
     private JwtUtil jwtUtil;
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     public ResponseEntity<?> login(LoginRequest loginRequest, HttpServletResponse response) {
         try {
@@ -42,12 +53,21 @@ public class AuthService {
             String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
             // HTTP-only cookies
-            addTokenCookie(response, "access_token", accessToken, (int) (1 * 60 * 60)); // 1 hour
-            addTokenCookie(response, "refresh_token", refreshToken, (int) (1 * 24 * 60 * 60)); // 1 day
+            addTokenCookie(response, "access_token", accessToken, (int) (1 * 60 * 60));
+            addTokenCookie(response, "refresh_token", refreshToken, (int) (1 * 24 * 60 * 60));
 
-            return ResponseEntity.ok().build();
+            UserDTO userDTO = userService.getUserByEmail(userDetails.getUsername());
+
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("message", "Login successful");
+            responseBody.put("user", userDTO);
+
+            return ResponseEntity.ok(responseBody);
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Authentication failed");
+            errorResponse.put("message", "Invalid email or password");
+            return ResponseEntity.status(401).body(errorResponse);
         }
     }
 
@@ -113,5 +133,22 @@ public class AuthService {
             }
         }
         return null;
+    }
+
+    public ResponseEntity<?> validateToken(HttpServletRequest request) {
+        String token = extractTokenFromCookie(request, "access_token");
+        
+        if (token != null && jwtUtil.validateToken(token)) {
+            String username = jwtUtil.extractUsername(token);
+            UserDTO userDTO = userService.getUserByEmail(username);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("valid", true);
+            response.put("user", userDTO);
+            
+            return ResponseEntity.ok(response);
+        }
+        
+        return ResponseEntity.status(401).body(Map.of("valid", false));
     }
 } 
