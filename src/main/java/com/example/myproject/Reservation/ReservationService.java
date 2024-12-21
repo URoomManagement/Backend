@@ -38,7 +38,7 @@ public class ReservationService {
 
     public ReservationsPerRoomDTO getReservationsByRoomId(Long roomId){
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
         List<Reservation> reservations = reservationRepository.findByRoomId(roomId);
 
