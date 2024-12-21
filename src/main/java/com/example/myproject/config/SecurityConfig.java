@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -32,17 +33,12 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/auth/refresh",
             "/api/auth/logout",
-            "/api/auth/validate",
-            "/api/users/register",
-            "/api/rooms/location",
-            "/api/reservations/rooms/**",
-            "/api/reservations/users/**",
-            "/api/reservations/**",
-            "/api/reservations"
+            "/api/auth/validate"
         );
 
         http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(permittedEndpoints.toArray(String[]::new)).permitAll()
                 .anyRequest().authenticated()
@@ -60,6 +56,19 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000"); 
+        config.addAllowedMethod("*"); 
+        config.addAllowedHeader("*"); 
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); 
+        return source;
     }
 
     @Bean
