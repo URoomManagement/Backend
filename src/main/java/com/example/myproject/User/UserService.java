@@ -53,6 +53,17 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    public void updatePassword(Long userId, String currentPassword, String newPassword){
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
     public void deleteUser(Long id){
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User not found");
