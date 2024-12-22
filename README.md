@@ -1,5 +1,8 @@
 # Backend
 
+## Youtube :
+Check this link : https://youtu.be/w2vZfDityIY
+
 ## What you need :
 - Create .env file (Check password channel or contact admin)
 ```
