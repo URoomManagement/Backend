@@ -12,5 +12,7 @@ public class EnvSetter {
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
         System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
         System.setProperty("JWT_REFRESH_SECRET_KEY", dotenv.get("JWT_REFRESH_SECRET_KEY"));
+        System.setProperty("SERVER_ADDRESS", dotenv.get("SERVER_ADDRESS"));
+        System.setProperty("SERVER_PORT", dotenv.get("SERVER_PORT"));   
     }
 }

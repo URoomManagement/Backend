@@ -14,6 +14,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.example.myproject.Helper.JwtAuthenticationFilter;
 
@@ -22,6 +23,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${server.address}")
+    private String serverAddress;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -64,6 +68,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000"); 
+        config.addAllowedOrigin("http://" + serverAddress + ":3000"); 
         config.addAllowedMethod("*"); 
         config.addAllowedHeader("*"); 
 
