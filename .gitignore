@@ -65,3 +65,5 @@ application-*.properties
 
 # OS-specific files
 *.class
+.env.local
+.env.production
